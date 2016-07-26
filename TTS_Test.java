@@ -21,11 +21,11 @@ public class TTS_Test {
 
 	private static String URL = "http://test.api.hcicloud.com:8880/tts/synthtext";
 	private static String responseString;
-//	private static String app_key = "c85d54f1";
-//	private static String dev_key = "712ddd892cf9163e6383aa169e0454e3";
+	private static String app_key = "c85d54f1";
+	private static String dev_key = "712ddd892cf9163e6383aa169e0454e3";
 
-	private static String app_key = "f85d54b3";
-	private static String dev_key = "3fb4443773085b6fbbe8265f1c805c4b";
+//	private static String app_key = "f85d54b3";
+//	private static String dev_key = "3fb4443773085b6fbbe8265f1c805c4b";
 	private static String cap_key = "tts.cloud.wangjing";
 	
 	public static void main(String[] args) {
@@ -48,16 +48,13 @@ public class TTS_Test {
 			myPost.setRequestHeader("x-session-key", MD5.getMD5(str.getBytes()));
 			myPost.setRequestHeader("x-udid", "101:123456789");
 			
-			RequestEntity entity = new StringRequestEntity("一二三四五", "text/html", "utf-8");
+			RequestEntity entity = new StringRequestEntity("12345", "text/html", "utf-8");
 			myPost.setRequestEntity(entity);
 			int statusCode = client.executeMethod(myPost);
-			String output = String.format("%d", statusCode);
-			System.out.println(statusCode);
 			
+			//判断返回的错误信息，200为正常返回，其他都是错误。
 			if (statusCode == HttpStatus.SC_OK) {
-				BufferedInputStream bis = new BufferedInputStream(
-						
-				myPost.getResponseBodyAsStream());
+				BufferedInputStream bis = new BufferedInputStream(myPost.getResponseBodyAsStream());
 				byte[] bytes = new byte[1024];
 				ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				int count = 0;
@@ -65,11 +62,9 @@ public class TTS_Test {
 					bos.write(bytes, 0, count);
 				}
 				byte[] strByte = bos.toByteArray();
-				//responseString = new String(strByte, 0, strByte.length, "utf-8");
+				
 				responseString = new String(strByte, 0, strByte.length, "iso-8859-1");
 				
-				//System.out.println(responseString);
-				//output = String.format("%s", responseString);
 				output = String.format("%d", responseString.indexOf("</ResponseInfo>"));
 				System.out.println(responseString.substring(0, responseString.indexOf("</ResponseInfo>") + 15));
 				responseString = responseString.substring(responseString.indexOf("</ResponseInfo>") + 15);
@@ -77,7 +72,7 @@ public class TTS_Test {
 				strByte = responseString.getBytes("iso-8859-1");
 				String path = System.getProperty("user.dir") + "\\wav\\";
 				System.out.println(path);
-				//output = String.format("%s", path);
+				
 				File file = new File(path, "nihao.pcm");
 				if (!file.exists())
 					file.createNewFile();
